@@ -17,8 +17,8 @@
  */
 package org.apache.hadoop.hbase.regionserver;
 
+import static org.apache.hadoop.hbase.regionserver.HStore.MEMSTORE_CLASS_NAME;
 import static org.junit.Assert.assertEquals;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseClassTestRule;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -48,6 +48,8 @@ public class TestRegionServerAccounting {
 
   @Test
   public void testOnheapMemstoreHigherWaterMarkLimits() {
+      conf.setFloat(MemorySizeUtil.MEMSTORE_SIZE_KEY, 0.2f);
+      conf.set(MEMSTORE_CLASS_NAME, DefaultMemStore.class.getName());
     RegionServerAccounting regionServerAccounting = new RegionServerAccounting(conf);
     long dataSize = regionServerAccounting.getGlobalMemStoreLimit();
     MemStoreSize memstoreSize =
@@ -59,6 +61,8 @@ public class TestRegionServerAccounting {
 
   @Test
   public void testOnheapMemstoreLowerWaterMarkLimits() {
+      conf.setFloat(MemorySizeUtil.MEMSTORE_SIZE_KEY, 0.2f);
+      conf.set(MEMSTORE_CLASS_NAME, DefaultMemStore.class.getName());
     RegionServerAccounting regionServerAccounting = new RegionServerAccounting(conf);
     long dataSize = regionServerAccounting.getGlobalMemStoreLimit();
     MemStoreSize memstoreSize =
@@ -66,6 +70,36 @@ public class TestRegionServerAccounting {
     regionServerAccounting.incGlobalMemStoreSize(memstoreSize);
     assertEquals(FlushType.ABOVE_ONHEAP_LOWER_MARK,
       regionServerAccounting.isAboveLowWaterMark());
+  }
+
+
+  @Test
+  public void testOnheapMemstoreHigherWaterMarkLimitsForCCSMap() {
+    Configuration conf = HBaseConfiguration.create();
+    conf.set(CompactingMemStore.COMPACTING_MEMSTORE_TYPE_KEY, "NONE");
+    conf.setFloat(MemorySizeUtil.MEMSTORE_SIZE_KEY, 0.2f);
+    // try for default cases
+    RegionServerAccounting regionServerAccounting = new RegionServerAccounting(conf);
+    MemStoreSize memstoreSize =
+        new MemStoreSize((3L * 1024L * 1024L * 1024L), (1L * 1024L * 1024L * 1024L),
+            (3L * 1024L * 1024L * 1024L));
+    regionServerAccounting.incGlobalMemStoreSize(memstoreSize);
+    assertEquals(FlushType.ABOVE_OFFHEAP_HIGHER_MARK,
+        regionServerAccounting.isAboveHighWaterMark());
+  }
+  @Test
+  public void testOnheapMemstoreLowerWaterMarkLimitsForCCSMap() {
+    Configuration conf = HBaseConfiguration.create();
+    conf.set(CompactingMemStore.COMPACTING_MEMSTORE_TYPE_KEY, "NONE");
+    conf.setFloat(MemorySizeUtil.MEMSTORE_SIZE_KEY, 0.2f);
+    conf.set(MEMSTORE_CLASS_NAME, DefaultMemStore.class.getName());
+    // try for default cases
+    RegionServerAccounting regionServerAccounting = new RegionServerAccounting(conf);
+    MemStoreSize memstoreSize =
+        new MemStoreSize((3L * 1024L * 1024L * 1024L), (1L * 1024L * 1024L * 1024L),
+            (3L * 1024L * 1024L * 1024L));
+    regionServerAccounting.incGlobalMemStoreSize(memstoreSize);
+    assertEquals(FlushType.ABOVE_OFFHEAP_LOWER_MARK, regionServerAccounting.isAboveLowWaterMark());
   }
 
   @Test
