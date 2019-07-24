@@ -33,8 +33,8 @@ import org.apache.yetus.audience.InterfaceAudience;
 public class MutableSegmentOnCCSMap extends MutableSegment {
 
   public MutableSegmentOnCCSMap(CellSet cellSet, CellComparator comparator,
-      MemStoreLAB memStoreLAB) {
-    super(cellSet, comparator, memStoreLAB,null);
+                                MemStoreLAB memStoreLAB) {
+    super(cellSet, comparator, memStoreLAB, new NonThreadSafeMemStoreSizingForCCSMap());
   }
 
   @Override
