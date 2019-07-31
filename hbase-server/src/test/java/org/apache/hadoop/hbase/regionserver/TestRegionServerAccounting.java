@@ -92,7 +92,8 @@ public class TestRegionServerAccounting {
     Configuration conf = HBaseConfiguration.create();
     conf.set(CompactingMemStore.COMPACTING_MEMSTORE_TYPE_KEY, "NONE");
     conf.setFloat(MemorySizeUtil.MEMSTORE_SIZE_KEY, 0.2f);
-    conf.set(MEMSTORE_CLASS_NAME, DefaultMemStore.class.getName());
+    //如果是测试CCSMAP-MEMSTORE 为什么又要指定DefaultMemStore呢 ?
+//    conf.set(MEMSTORE_CLASS_NAME, DefaultMemStore.class.getName());
     // try for default cases
     RegionServerAccounting regionServerAccounting = new RegionServerAccounting(conf);
     MemStoreSize memstoreSize =

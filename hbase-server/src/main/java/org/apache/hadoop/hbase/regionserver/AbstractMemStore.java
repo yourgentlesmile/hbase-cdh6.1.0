@@ -60,7 +60,8 @@ public abstract class AbstractMemStore implements MemStore {
 
   public final static long FIXED_OVERHEAD = (long) ClassSize.OBJECT
           + (5 * ClassSize.REFERENCE)
-          + (2 * Bytes.SIZEOF_LONG); // snapshotId, timeOfOldestEdit
+          + (2 * Bytes.SIZEOF_LONG) // snapshotId, timeOfOldestEdit
+          + (1 * Bytes.SIZEOF_BOOLEAN); // isMeta
 
   public final static long DEEP_OVERHEAD = FIXED_OVERHEAD;
 
