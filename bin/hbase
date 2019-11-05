@@ -117,6 +117,7 @@ if [ $# = 0 ]; then
   echo "  rowcounter      Run RowCounter tool"
   echo "  cellcounter     Run CellCounter tool"
   echo "  pre-upgrade     Run Pre-Upgrade validator tool"
+  echo "  hbtop           Run HBTop tool"
   echo "  CLASSNAME       Run the class named CLASSNAME"
   exit 1
 fi
